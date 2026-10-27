@@ -139,7 +139,8 @@ export class EfzFormWizard {
       const confirmed = await this.options.showModal(
         "Sve nespremljene promjene će biti izgubljene.",
         "Jeste li sigurni da želite odustati?",
-        "warn"
+        "warn",
+        { confirm: "Da, odustani" } // Uputa, Slika 18
       );
       if (confirmed) {
         this.options.onAbort("Odustali ste od izrade prijave (klik na 'Odustani').");
@@ -160,7 +161,8 @@ export class EfzFormWizard {
       const confirmed = await this.options.showModal(
         "Nakon podnošenja, izmjene prijave više nisu moguće.",
         "Jeste li sigurni da želite podnijeti prijavu?",
-        "info"
+        "warn",
+        { confirm: "Da, podnesi prijavu" } // Uputa, Slika 44
       );
 
       if (confirmed) {
