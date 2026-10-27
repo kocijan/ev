@@ -505,7 +505,7 @@ class EvSimulatorApp {
       profile: { ...this.profile },
       onSubmit: (submission) => this._handleFinish(submission),
       onAbort: (reason) => this.abortRace(reason),
-      showModal: (text, title, kind) => this.showSystemModal(text, title, kind),
+      showModal: (text, title, kind, labels) => this.showSystemModal(text, title, kind, labels),
       showToast: (msg, kind) => this.showToast(msg, kind)
     });
 
@@ -520,7 +520,14 @@ class EvSimulatorApp {
     this.timerRaf = requestAnimationFrame(updateTimer);
   }
 
-  showSystemModal(text, title = "Obavijest", kind = "info") {
+  /**
+   * Sistemski dijalog. Za kind "info"/"error" prikazuje samo „U redu“;
+   * inače par gumba (odustani / potvrdi). Natpisi gumba ovise o dijalogu
+   * (vidi Uputu, Slika 18 i Slika 44), pa se mogu zadati kroz `labels`.
+   */
+  showSystemModal(text, title = "Obavijest", kind = "info", labels = {}) {
+    const confirmLabel = labels.confirm || "Da, nastavi";
+    const cancelLabel = labels.cancel || "Ne, vrati me natrag";
     return new Promise((resolve) => {
       if (!this.efzModal) return resolve(true);
 
@@ -538,9 +545,11 @@ class EvSimulatorApp {
           actionsEl.innerHTML = `<button type="submit" class="efz-btn efz-btn--primary" value="ok">U redu</button>`;
         } else {
           actionsEl.innerHTML = `
-            <button type="button" class="efz-btn" id="modal-btn-cancel">Ne, vrati me natrag</button>
-            <button type="submit" class="efz-btn efz-btn--primary" value="confirm">Da, nastavi</button>
+            <button type="button" class="efz-btn" id="modal-btn-cancel"></button>
+            <button type="submit" class="efz-btn efz-btn--primary" value="confirm"></button>
           `;
+          actionsEl.querySelector("#modal-btn-cancel").textContent = cancelLabel;
+          actionsEl.querySelector('[value="confirm"]').textContent = confirmLabel;
           const cancelBtn = actionsEl.querySelector("#modal-btn-cancel");
           if (cancelBtn) {
             cancelBtn.onclick = () => {
